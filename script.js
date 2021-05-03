@@ -1,27 +1,25 @@
-const https = require("https");
-const fs = require("fs")
+const http = require("http");
+const fs = require("fs");
+const axios = require('axios');
 
-let url = "https://www.reddit.com/r/popular.json";
+const findResult = "result";
+if (!fs.existsSync(findResult)) {
+  fs.mkdirSync(findResult)
+  console.log(`${findResult} directory created`)
+}
 
-https.get(url, (res) => {
-  let body = "";
-
-  res.on("data", (chunk) => {
-    body += chunk;
+const jsonData = axios.get(`http://jsonplaceholder.typicode.com/posts`)
+.then(response => response.json())
+.then(jsonData => {
+  outcomeData = JSON.stringify(jsonData,  null, 2);
+  fs.writeFile("./result/post.txt", outcomeData, (err) => {
+    if(err) throw err;
   })
-
-  res.on(end, ()=> {
-    try {
-      let json = JSON.parse(body)
-
-       fs.writeFile("result"/"json.txt", body, (err) => {
-         if (err) throw err;
-         console.log("data witten to json.txt")
-       })
-    }catch (error) {
-      conole.error(error.message)
-    }
-  })
-}).on("error", (error) => {
-  console.error(error.message);
 })
+
+http.createServer((req, res) => {
+  fs.readFile(fileDirectory, "utf-8", (err, data) => {
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(data);
+  })
+    }).listen(5500);
